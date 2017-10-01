@@ -15,7 +15,7 @@ Public Sub getInitials()
     counter = 0
     ReDim initials(0)
     For Each cell In Sheets("All Therapists").Range("therapistsInitials")
-        If cell.Value <> "-" And cell.Value <> " " Then
+        If cell.Value <> "-" And Not IsEmpty(cell) Then
             initials(counter) = cell.Value
             counter = counter + 1
             ReDim Preserve initials(counter)
@@ -74,3 +74,51 @@ Public Sub getRooms()
 
 End Sub
 
+Public Sub getSchedules()
+    ' declare variables
+    Dim therapistRoom As Range
+    Dim room3W As Range
+    Dim room3P As Range
+    Dim room8P As Range
+    Dim allSchedRooms As Range
+    Dim rooms3WSched As Range
+    Dim rooms3PSched As Range
+    Dim rooms8PSched As Range
+    
+    ' set variables
+    Set allSchedRooms = Sheets("ExperimentalAS").Range("RoomsAllSchedules")
+    Set rooms3WSched = Sheets("3W Schedule").Range("Rooms3WSchedule")
+    Set rooms3PSched = Sheets("3P Schedule").Range("Rooms3PSchedule")
+    Set rooms8PSched = Sheets("8P Schedule").Range("Rooms8PSchedule")
+    
+    ' Grab rooms from 3W Schedule
+    For Each therapistRoom In allSchedRooms
+        For Each room3W In rooms3WSched
+            If IsEmpty(therapistRoom.Value) Or therapistRoom.Value > 89 Then
+                Exit For
+            End If
+            
+            If therapistRoom.Value = room3W.Value Then
+                Range(room3W.Offset(0, 1), room3W.Offset(0, 22)).Copy
+                Range(therapistRoom.Offset(0, 4), therapistRoom.Offset(0, 24)).PasteSpecial xlPasteValues
+                Exit For
+            End If
+        Next room3W
+    Next therapistRoom
+    
+    ' Grab rooms from 8P Schedule
+    For Each therapistRoom In allSchedRooms
+        For Each room8P In rooms8PSched
+            If therapistRoom.Value = room8P.Value Then
+                Range(room8P.Offset(0, 1), room8P.Offset(0, 22)).Copy
+                Range(therapistRoom.Offset(0, 4), therapistRoom.Offset(0, 24)).PasteSpecial xlPasteValues
+                Exit For
+            End If
+        Next room8P
+    Next therapistRoom
+    
+    ' turn cut copy mode off
+    Application.CutCopyMode = False
+    
+
+End Sub
