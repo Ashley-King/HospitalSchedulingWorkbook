@@ -1,0 +1,76 @@
+Option Explicit
+
+' get initials from All Therapists sheet and put them in the initials boxes
+' in the ExperimentalAS sheet
+
+Public Sub getInitials()
+    ' declare variables
+    Dim initialsBoxes As Variant
+    Dim counter As Integer
+    Dim i As Integer
+    Dim cell As Range
+    
+    ' initialize counter and array
+    ' if cell in named range from All Therapists Sheet contains initials, add to array
+    counter = 0
+    ReDim initials(0)
+    For Each cell In Sheets("All Therapists").Range("therapistsInitials")
+        If cell.Value <> "-" And cell.Value <> " " Then
+            initials(counter) = cell.Value
+            counter = counter + 1
+            ReDim Preserve initials(counter)
+        End If
+    Next cell
+    
+    ' initialize counter for initials array
+    ' loop through named range in ExperimentalAS and add initials to correct cells
+    ' until initials array ends
+    i = 0
+    For Each cell In Sheets("ExperimentalAS").Range("therapistInitialsBox")
+        If i < UBound(initials) Then
+            cell.Value = initials(i)
+        End If
+        i = i + 1
+    Next cell
+End Sub
+
+' match initials from therapist schedule to initials in All Therapists sheet and grab
+' room numbers for that therapist
+
+Public Sub getRooms()
+    Dim cell As Range
+    Dim newCell As Range
+    Dim rng As Range
+    Dim i As Integer
+    Dim j As Integer
+    Dim k As Integer
+    
+    ' set initial cell value to first therapist initials box
+    Set cell = Sheets("ExperimentalAS").Range("$O$1")
+    ' set newCell to same value
+    Set newCell = cell
+    
+    ' set counter for newCell row offset
+    j = 3
+    
+    ' for each cell in All Therapists initials column, if value of cell (rng)
+    ' matches value of newCell, grab the room numbers and put them in the correct
+    ' schedule
+    For Each rng In Sheets("All Therapists").Range("therapistsInitials")
+        If newCell.Value = rng.Value Then
+           ' set counter (k) for All Therapists initials cell column numbers
+           For k = 4 To 21
+            If Not IsEmpty(rng.Offset(0, k).Value) Then
+                newCell.Offset(j, -14).Value = rng.Offset(0, k).Value
+                j = j + 1
+            End If
+           Next k
+          ' go to the next therapist initials box in schedule
+          Set newCell = newCell.Offset(33, 0)
+        End If
+       ' reset counter for newCell row offset
+       j = 3
+    Next rng
+
+End Sub
+
