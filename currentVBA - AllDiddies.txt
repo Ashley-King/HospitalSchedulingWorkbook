@@ -2,6 +2,9 @@ Option Explicit
 
 ' read 3W and 8P schedules and create diddies for each room that is occupied
 Public Sub createDiddies()
+    ' clear diddies
+    Call clearDiddies
+    
     ' declare variables
     Dim initialsDict As Object
     Dim initialsCell As Range
@@ -13,10 +16,11 @@ Public Sub createDiddies()
     Dim roomCell As Range
     Dim initialsString As String
     Dim newString As String
+    Dim newRoom As Range
     
     
     
-    
+    ' create dictionary object
     Set initialsDict = CreateObject("Scripting.Dictionary")
     
     ' loop through all therapists to get initials, name and profession; add to dictionary
@@ -37,32 +41,64 @@ Public Sub createDiddies()
     For Each room In Sheets("3W Schedule").Range("Rooms3WSchedule")
         ' if room is not empty, add it to diddies and get therapists
         If Not room.Offset(0, 23) = " " And Not room.Offset(0, 24) = " " And Not room.Offset(0, 23) = "" And Not room.Offset(0, 24) = "" Then
-          
           ' add room number to first diddie
           roomCell.Value = room.Value
           ' i will start two rows below roomCell in the 6:30 time slot
           i = 2
-          
+          ' j will count rows in 3W schedule
           For j = 1 To 22
-            If Not IsEmpty(room.Offset(0, j)) And Not room.Offset(0, j) = " " Then
+            If Not IsEmpty(room.Offset(0, j)) And Not room.Offset(0, j) = " " And Not room.Offset(0, j) = "Lunch" And Not room.Offset(0, j) = "LUNCH" Then
+                ' extract initials from string in cell
                 initialsString = room.Offset(0, j).Value
                 newString = getInitials(initialsString)
+                ' if string in cell is in the initials dictionary, add
+                ' dictionary value (therapist name and profession) to diddie
                 If initialsDict.Exists(newString) Then
                     roomCell.Offset(i, 0).Value = initialsDict(newString)
                 End If
+            Else
+                roomCell.Offset(i, 0).Value = room.Offset(0, j).Value
                 
-                ' get value from each time slot and put into diddie
-                'roomCell.Offset(i, 0).Value = room.Offset(0, j).Value
+            End If
+            
+            ' increment row on diddie schedule
+            i = i + 1
+          Next j
+          ' increment to next diddie room number
+          Set roomCell = roomCell.Offset(28, 0)
+        End If
+    Next room
+    ' keep roomCell reference and loop through 8P
+    For Each newRoom In Sheets("8P Schedule").Range("Rooms8PSchedule")
+        ' if room is not empty, add it to diddies and get therapists
+        If Not newRoom.Offset(0, 23) = " " And Not newRoom.Offset(0, 24) = " " And Not newRoom.Offset(0, 23) = "" And Not newRoom.Offset(0, 24) = "" Then
+          ' add room number to first diddie
+          roomCell.Value = newRoom.Value
+          ' i will start two rows below roomCell in the 6:30 time slot
+          i = 2
+          ' j will count rows in 3W schedule
+          For j = 1 To 22
+            If Not IsEmpty(newRoom.Offset(0, j)) And Not newRoom.Offset(0, j) = " " And Not newRoom.Offset(0, j) = "Lunch" And Not newRoom.Offset(0, j) = "LUNCH" Then
+                ' extract initials from string in cell
+                initialsString = newRoom.Offset(0, j).Value
+                newString = getInitials(initialsString)
+                ' if string in cell is in the initials dictionary, add
+                ' dictionary value (therapist name and profession) to diddie
+                If initialsDict.Exists(newString) Then
+                    roomCell.Offset(i, 0).Value = initialsDict(newString)
+                End If
+            Else
+                roomCell.Offset(i, 0).Value = newRoom.Offset(0, j).Value
             End If
             ' increment row on diddie schedule
             i = i + 1
           Next j
-         
           ' increment to next diddie room number
           Set roomCell = roomCell.Offset(28, 0)
         End If
-        
-    Next room
+    
+    Next newRoom
+    
     
 End Sub
 
@@ -71,12 +107,12 @@ Public Sub clearDiddies()
 Dim clearArea As Range
 Dim cell As Range
 
-
+Sheets("NewDiddies").Range("AllDiddiesRooms").ClearContents
 For Each cell In Sheets("NewDiddies").Range("AllDiddiesSchedRange")
     cell.MergeArea.ClearContents
     
 Next cell
- Sheets("NewDiddies").Range("AllDiddiesRooms").ClearContents
+ 
 End Sub
 
 ' get string value from cell and extract and return initials
