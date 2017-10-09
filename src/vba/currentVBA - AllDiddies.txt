@@ -22,10 +22,13 @@ Public Sub createDiddies()
     count3P = 0
     
     ' set timeCreated box in diddies sheet
-    Set timeCreated = Sheets("newDiddies").range("$H$13")
+    Set timeCreated = Sheets("All Diddies").range("$H$13")
     
     ' initialize first room cell for diddies; offset for next is (28,0)
-    Set roomCell = Sheets("NewDiddies").range("$B$4")
+    Set roomCell = Sheets("All Diddies").range("$B$4")
+    
+    ' disable alerts about replacing data in non-blank cells
+    Application.DisplayAlerts = False
     
     ' loop though rooms on 3W schedule; if y AND z columns are BOTH empty for a room, do not add
     ' room to diddie; otherwise loop through time slots and add therapists to diddie
@@ -41,10 +44,10 @@ Public Sub createDiddies()
           ' j will count rows in 3W schedule
           For j = 1 To 22
             If Not IsEmpty(room.Offset(0, j)) And Not room.Offset(0, j) = " " Then
-                ' put value in checkValue function and return name, lunch or none
+                ' put value in checkValue function and return name, lunch or gray
                 newString = checkValue(room.Offset(0, j).value)
                 ' if function returns therapist name or lunch, add to diddie
-                If newString = "LUNCH" Or newString <> "NONE" Then
+                If newString = "GRAY" Or newString <> "NONE" Then
                     roomCell.Offset(i, 0).value = newString
                 End If
             End If
@@ -69,10 +72,10 @@ Public Sub createDiddies()
           ' j will count rows in 3W schedule
           For j = 1 To 22
             If Not IsEmpty(newRoom.Offset(0, j)) And Not newRoom.Offset(0, j) = " " Then
-            ' put value in checkValue function and return name, lunch or none
+            ' put value in checkValue function and return name, lunch or gray
                 newString = checkValue(newRoom.Offset(0, j).value)
                 ' if function returns therapist name or lunch, add to diddie
-                If newString = "LUNCH" Or newString <> "NONE" Then
+                If newString = "LUNCH" Or newString <> "GRAY" Then
                     roomCell.Offset(i, 0).value = newString
                 End If
             End If
@@ -84,18 +87,18 @@ Public Sub createDiddies()
         End If
     Next newRoom
     
-'    ' reset dictionary
-'    Set initialsDict = Nothing
-    
+
     ' display diddie counts
-    Sheets("NewDiddies").range("$I$7").value = count3W
-    Sheets("NewDiddies").range("$I$8").value = count8P
-    Sheets("NewDiddies").range("$I$9").value = count3P
-    Sheets("NewDiddies").range("$I$10").value = count3W + count8P + count3P
+    Sheets("All Diddies").range("$I$7").value = count3W
+    Sheets("All Diddies").range("$I$8").value = count8P
+    Sheets("All Diddies").range("$I$9").value = count3P
+    Sheets("All Diddies").range("$I$10").value = count3W + count8P + count3P
     
     ' show time the schedule was last created
     Call lastTimeCreated(timeCreated)
     
+    ' turn alerts back on
+    Application.DisplayAlerts = True
     
 End Sub
 

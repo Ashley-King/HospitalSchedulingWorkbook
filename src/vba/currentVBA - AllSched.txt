@@ -142,6 +142,96 @@ Public Sub countTherapists()
     Sheets("All Schedules").range("$AD$11").value = count3W + count8P + count3P
     
 End Sub
+' apply conditional formatting to All Schedules
+Public Sub allSchedCondFormat()
+    ' declare variables
+    Dim evalInt As range
+    Dim roomCell As range
+    Dim newEI As range
+    Dim newRoom As range
+    Dim evalInt8P As range
+    Dim roomCell8P As range
+    Dim newEI8P As range
+    Dim newRoom8P As range
+    Dim initialsBox As range
+    Dim initialsCell As range
+    Dim schedCell As range
+    Dim initialsValue As String
+     
+    ' show that EVALs are highlighted in yellow
+    With Sheets("All Schedules").range("EvalKeyBox")
+        .value = "EVAL"
+        .Font.Size = 9
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .Interior.ColorIndex = 36
+    End With
+     ' show that INTs are highlighted in pink
+    With Sheets("All Schedules").range("IntKeyBox")
+        .value = "INT"
+        .Font.Size = 9
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .Interior.ColorIndex = 38
+    End With
+    
+    ' highlight rooms in 3W with EVALs in yellow
+    For Each evalInt In Sheets("3W Schedule").range("Eval_Int_3W")
+        If LCase(evalInt.value) = "eval" Then
+            For Each roomCell In Sheets("All Schedules").range("RoomsAllSchedules")
+               If evalInt.Offset(0, 1).value = roomCell.value Then
+                roomCell.Interior.ColorIndex = 36
+               End If
+            Next roomCell
+        End If
+    Next evalInt
+        
+      ' highlight rooms in 3W with INTs in pink
+    For Each newEI In Sheets("3W Schedule").range("Eval_Int_3W")
+        If LCase(newEI.value) = "int" Then
+            For Each newRoom In Sheets("All Schedules").range("RoomsAllSchedules")
+               If newEI.Offset(0, 1).value = newRoom.value Then
+                newRoom.Interior.ColorIndex = 38
+               End If
+            Next newRoom
+        End If
+    Next newEI
+    
+    ' highlight rooms in 8P with EVALs in yellow
+    For Each evalInt8P In Sheets("8P Schedule").range("Eval_Int_8P")
+        If LCase(evalInt8P.value) = "eval" Then
+            For Each roomCell8P In Sheets("All Schedules").range("RoomsAllSchedules")
+               If evalInt8P.Offset(0, 1).value = roomCell8P.value Then
+                roomCell8P.Interior.ColorIndex = 36
+               End If
+            Next roomCell8P
+        End If
+    Next evalInt8P
+        
+      ' highlight rooms in 8P with INTs in pink
+    For Each newEI8P In Sheets("8P Schedule").range("Eval_Int_8P")
+        If LCase(newEI8P.value) = "int" Then
+            For Each newRoom8P In Sheets("All Schedules").range("RoomsAllSchedules")
+               If newEI8P.Offset(0, 1).value = newRoom8P.value Then
+                newRoom8P.Interior.ColorIndex = 38
+               End If
+            Next newRoom8P
+        End If
+    Next newEI8P
+    
+    ' highlight therapist's rooms on schedule in a different yellow
+    For Each initialsCell In Sheets("All Schedules").range("AllSchedTherapistInitialsBox")
+        For Each schedCell In Sheets("All Schedules").range(initialsCell.Offset(3, -10), initialsCell.Offset(20, 11))
+            If Not IsEmpty(schedCell) Then
+                initialsValue = returnInitials(schedCell.value)
+                If initialsCell.value = initialsValue Then
+                    schedCell.Interior.ColorIndex = 6
+                End If
+            End If
+        Next schedCell
+    Next initialsCell
+    
+End Sub
 
 
 ' clear cells and populate schedules; scroll back to top of page
@@ -165,8 +255,11 @@ Public Sub createSchedules()
     Call countTherapists
     ' show time created
     Call lastTimeCreated(timeCreated)
+    ' apply highlighting
+    Call allSchedCondFormat
     ' go back to top of sheet
     ActiveWindow.ScrollRow = 1
     ' turn alerts back on
     Application.DisplayAlerts = True
 End Sub
+

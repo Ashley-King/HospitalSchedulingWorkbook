@@ -3,19 +3,25 @@ Option Explicit
 Public Sub clearAllSched()
     Sheets("All Schedules").range("AllSchedTherapistInitialsBox").value = ""
     Sheets("All Schedules").range("RoomsAllSchedules").ClearContents
+    ' remove room highlighting for evals and ints
+    Sheets("All Schedules").range("RoomsAllSchedules").Interior.ColorIndex = 2
     Sheets("All Schedules").range("AllSchedDataGrid").ClearContents
+    ' remove time highlighting for therapist
+    Sheets("All Schedules").range("AllSchedDataGrid").Interior.ColorIndex = 2
     Sheets("All Schedules").range("AllSchedNoteAreas").ClearContents
-     Sheets("All Schedules").range("$AD$8:$AD$11").ClearContents
+    Sheets("All Schedules").range("$AD$8:$AD$11").ClearContents
 End Sub
 ' clear all data in diddies
 Public Sub clearDiddies()
 Dim clearArea As range
 Dim cell As range
 
-Sheets("NewDiddies").range("AllDiddiesRooms").ClearContents
-For Each cell In Sheets("NewDiddies").range("AllDiddiesSchedRange")
+Sheets("All Diddies").range("AllDiddiesRooms").ClearContents
+Sheets("All Diddies").range("AllDiddiesRooms").FormatConditions.Delete
+For Each cell In Sheets("All Diddies").range("AllDiddiesSchedRange")
     cell.MergeArea.ClearContents
-    
+    ' remove any highlighting
+    cell.MergeArea.Interior.ColorIndex = 2
 Next cell
  
 End Sub
@@ -29,6 +35,8 @@ Public Function checkValue(value As String) As String
     Dim grayOptionsDict As Object
     Dim grayCounter As Integer
     Dim cell As range
+    Dim cell2 As range
+    Dim cell3 As range
     Dim grayOpt As Variant
     Dim newValue As String
     
@@ -40,7 +48,7 @@ Public Function checkValue(value As String) As String
     ' key = initials; value = name + profession
     For Each initialsCell In Sheets("All Therapists").range("AllTherapistsInitials")
         If Not IsEmpty(initialsCell) And initialsCell.value <> "-" Then
-            initials = initialsCell.value
+            initials = Trim(initialsCell.value)
             nameAndProf = initialsCell.Offset(0, 3) & " " & initialsCell.Offset(0, 2)
             initialsDict.Add Key:=initials, Item:=nameAndProf
         End If
@@ -54,48 +62,36 @@ Public Function checkValue(value As String) As String
     
     ' loop through 3W gray options and add to dictionary
     For Each cell In Sheets("3W Schedule").range("GrayOptions3W")
-        If Not IsEmpty(cell) And cell.value <> " " And Not grayOptionsDict.Exists(cell.value) Then
-            grayOptionsDict.Add Key:=cell.value, Item:=grayCounter
+        If Not IsEmpty(cell) And cell.value <> " " And Not grayOptionsDict.Exists(Trim(cell.value)) Then
+            grayOptionsDict.Add Key:=Trim(cell.value), Item:=grayCounter
             grayCounter = grayCounter + 1
         End If
     Next cell
     
     ' loop through 8P gray options and add to dictionary
-    For Each cell In Sheets("8P Schedule").range("GrayOptions8P")
-        If Not IsEmpty(cell) And cell.value <> " " And Not grayOptionsDict.Exists(cell.value) Then
-            grayOptionsDict.Add Key:=cell.value, Item:=grayCounter
+    For Each cell2 In Sheets("8P Schedule").range("GrayOptions8P")
+        If Not IsEmpty(cell2) And cell2.value <> " " And Not grayOptionsDict.Exists(Trim(cell2.value)) Then
+            grayOptionsDict.Add Key:=Trim(cell2.value), Item:=grayCounter
             grayCounter = grayCounter + 1
         End If
-    Next cell
+    Next cell2
     
     ' loop through 3P gray options and add to dictionary
-    For Each cell In Sheets("3P Schedule").range("GrayOptions3P")
-        If Not IsEmpty(cell) And cell.value <> " " And Not grayOptionsDict.Exists(cell.value) Then
-            grayOptionsDict.Add Key:=cell.value, Item:=grayCounter
+    For Each cell3 In Sheets("3P Schedule").range("GrayOptions3P")
+        If Not IsEmpty(cell3) And cell3.value <> " " And Not grayOptionsDict.Exists(Trim(cell3.value)) Then
+            grayOptionsDict.Add Key:=Trim(cell.value), Item:=grayCounter
             grayCounter = grayCounter + 1
         End If
-    Next cell
+    Next cell3
     
     ' account for possible spaces in lunch cell
-    If LCase(value) = "lunch" Or LCase(value) = " lunch" Or LCase(value) = "lunch " Then
+    If Trim(LCase(value)) = "lunch" Then
         checkValue = "LUNCH"
-    ElseIf grayOptionsDict.Exists(value) Then
-        checkValue = "NONE"
+    ElseIf grayOptionsDict.Exists(Trim(value)) Then
+        checkValue = "GRAY"
     Else
-        'extract and return initials
-        If Len(value) > 3 Then
-            If Len(value) > 5 Then
-                newValue = Right(value, 3)
-                newValue = Replace(newValue, " ", "")
-                checkValue = initialsDict(newValue)
-            Else
-                newValue = Right(value, 2)
-                checkValue = initialsDict(newValue)
-            End If
-    
-        Else
-            checkValue = initialsDict(value)
-        End If
+        ' use returnInitials to extract initials from cell value
+        checkValue = initialsDict(returnInitials(value))
     End If
     
     ' reset initials dictionary
@@ -111,3 +107,27 @@ Public Sub lastTimeCreated(range)
    timeDate = Now()
    range.value = timeDate
 End Sub
+
+
+' takes a cell value and returns the initials
+Public Function returnInitials(value As String)
+     ' declare variables
+     Dim newValue As String
+     
+     ' remove trailing and initial spaces
+     value = Trim(value)
+     
+     If Len(value) > 3 Then ' initials are 2 or 3 characters
+            If Len(value) > 5 Then
+                newValue = Right(value, 3)
+                newValue = Replace(newValue, " ", "")
+                returnInitials = newValue
+            Else ' length of value is 4 or 5
+                newValue = Right(value, 2)
+                returnInitials = newValue
+            End If
+    
+        Else ' length of value is <= 3
+            returnInitials = value
+        End If
+End Function
