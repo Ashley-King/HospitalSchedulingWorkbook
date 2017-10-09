@@ -234,10 +234,12 @@ Public Sub allSchedCondFormat()
 End Sub
 
 
-' clear cells and populate schedules; scroll back to top of page
+' clear highlighting and populate schedules; scroll back to top of page
 Public Sub createSchedules()
     ' declare variables
     Dim timeCreated As range
+    ' clear highlighting
+    Sheets("All Schedules").Cells.Interior.ColorIndex = 2
     
     ' set box for displaying time schedule was created
     Set timeCreated = Sheets("All Schedules").range("$AC$14")
