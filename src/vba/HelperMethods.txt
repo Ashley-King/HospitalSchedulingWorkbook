@@ -190,7 +190,7 @@ Public Function isGray(value As String) As Boolean
     Set grayOptionsDict = Nothing
 End Function
 ' copy named ranges from one workbook to another
-Sub CopyNames()
+Sub copyNames()
     Dim Source As Workbook
     Dim Target As Workbook
     Dim n As Name
