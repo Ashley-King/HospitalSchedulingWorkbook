@@ -1,0 +1,14 @@
+' change schedule when initials cell is changed and enter is pressed
+Private Sub Worksheet_Change(ByVal Target As Excel.range)
+    Dim vRange As range
+    Dim cell As range
+    
+    Set vRange = Sheets("Ind Schedule").range("IndSchedInitials")
+    If Union(Target, vRange).Address = vRange.Address Then
+        Call createIndSched
+    End If
+   
+End Sub
+
+
+
