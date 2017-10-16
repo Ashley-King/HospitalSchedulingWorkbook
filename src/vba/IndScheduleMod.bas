@@ -1,3 +1,4 @@
+Attribute VB_Name = "IndScheduleMod"
 Option Explicit
 ' create schedule for individual therapist
 Sub createIndSched()
@@ -84,4 +85,6 @@ Sub createIndSched()
    Sheets("Ind Schedule").range("IndSchedInitials").Select
    
 End Sub
+
+
 

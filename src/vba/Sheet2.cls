@@ -1,10 +1,16 @@
-Sub PasswordProtect()
-'
-' PasswordProtect Macro
-        
-'Remove the password protection
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "Sheet2"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+Option Explicit
 
-    ActiveSheet.Unprotect
+Private Sub CommandButton1_Click()
+
     
 'Path = file path where the data will be saved ******(change this to your appropriate file location)******
     Dim Path As String
@@ -34,10 +40,10 @@ Sub PasswordProtect()
     
 ' Save the workbook
     ActiveWorkbook.Save
-    
-        
+            
 End Sub
-'This Sub will save the current schedule as PDF for use with Scheduling PDF script
+
+'This Sub will save the current schedule as PDF for use with Scheduling HTML script
 Private Sub SaveSchedule(FName As String, ASName As String, FloorNum As String)
 
     With ActiveSheet.PageSetup
@@ -54,25 +60,26 @@ Private Sub SaveSchedule(FName As String, ASName As String, FloorNum As String)
    IncludeDocProperties:=True, _
    IgnorePrintAreas:=False, _
    OpenAfterPublish:=True
-
+   
+   
 
 End Sub
 'This Sub will save the current schedule as an Archived PDF file
 Private Sub SaveArchive(ASName As String, FloorNum As String)
     
-    Dim Archive As String
-    Archive = "C:\temp\ScheduleArchive\"
-        
     With ActiveSheet.PageSetup
         .CenterHeader = "Archived Copy: " & ASName & " For " & GetDate()
         .Orientation = xlLandscape
         .PrintArea = "$B$1:$X$25"
         .Zoom = False
     End With
+    
+    Dim Archive As String
+    Archive = "C:\temp\Archive"
         
    ActiveSheet.ExportAsFixedFormat _
    Type:=xlTypePDF, _
-   Filename:=Archive & " " & ASName & FName & " " & GetDate(), _
+   Filename:=Archive & " " & ASName & GetDate(), _
    Quality:=xlQualityStandard, _
    IncludeDocProperties:=True, _
    IgnorePrintAreas:=False, _
@@ -114,15 +121,7 @@ End Function
 Private Function GetRange(ASName As String) As String
   If ASName = "8P Schedule" Then
         GetRange = "$B$1:$AA$32"
-        Exit Function
-    ElseIf ASName = "3W Schedule" Then
-        GetRange = "$B$1:$AA$22"
-        Exit Function
-    End If
+  End If
+
+
 End Function
-
-
-
-
-
-

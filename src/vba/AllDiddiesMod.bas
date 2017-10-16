@@ -1,3 +1,4 @@
+Attribute VB_Name = "AllDiddiesMod"
 Option Explicit
 
 ' read 3W and 8P schedules and create diddies for each room that is occupied
@@ -115,6 +116,8 @@ Public Sub createDiddies()
     Application.DisplayAlerts = True
     
 End Sub
+
+
 
 
 

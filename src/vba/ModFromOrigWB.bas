@@ -1,3 +1,4 @@
+Attribute VB_Name = "ModFromOrigWB"
 ' procedure from original workbook
 Sub SelectRange()
 '

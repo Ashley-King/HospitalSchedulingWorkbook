@@ -1,3 +1,4 @@
+Attribute VB_Name = "AllSchedulesMod"
 Option Explicit
 ' read 3W and 8P schedules and copy into All Schedules
 Public Sub readSchedules()
@@ -170,3 +171,5 @@ Public Sub createSchedules()
    Application.ScreenUpdating = True
     
 End Sub
+
+

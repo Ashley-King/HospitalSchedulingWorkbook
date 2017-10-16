@@ -1,3 +1,4 @@
+Attribute VB_Name = "SaveSchedMod"
 Option Explicit
 
 Sub PasswordProtect()

@@ -1,3 +1,4 @@
+Attribute VB_Name = "HelperMethods"
 Option Explicit
 
 ' clear contents and highlighting from All Schedules Sheet
@@ -312,3 +313,4 @@ Public Sub schedCondFormat(evalKey As range, intKey As range, schedRooms As rang
     ' turn on screen updating
     Application.ScreenUpdating = True
 End Sub
+

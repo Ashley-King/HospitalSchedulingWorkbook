@@ -1,3 +1,6 @@
+Attribute VB_Name = "searchRangeMod"
+Option Explicit
+
 ' searches for a val in sRng, if the value matches the value
 'in the same row first column is returned to the cell
 Public Function searchRange(val As range, sRng As range)
@@ -10,5 +13,3 @@ Public Function searchRange(val As range, sRng As range)
     Next cel
     searchRange = ""
 End Function
-
-
