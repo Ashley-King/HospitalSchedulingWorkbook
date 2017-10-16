@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+' All code in this file written by Ashley King
+
 ' creates workbook open even that allows macros to run when protected but does not allow
 ' other modifications
 Private Sub Workbook_Open()

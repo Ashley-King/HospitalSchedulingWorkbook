@@ -1,6 +1,8 @@
 Attribute VB_Name = "AllDiddiesMod"
 Option Explicit
 
+' All code in this file written by Ashley King
+
 ' read 3W and 8P schedules and create diddies for each room that is occupied
 Public Sub createDiddies()
     

@@ -1,5 +1,8 @@
 Attribute VB_Name = "IndScheduleMod"
 Option Explicit
+
+' All code in this file written by Ashley King
+
 ' create schedule for individual therapist
 Sub createIndSched()
     Dim cell1 As range

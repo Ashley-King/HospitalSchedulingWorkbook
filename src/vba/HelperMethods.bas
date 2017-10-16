@@ -1,6 +1,8 @@
 Attribute VB_Name = "HelperMethods"
 Option Explicit
 
+' All code in this file written by Ashley King
+
 ' clear contents and highlighting from All Schedules Sheet
 ' does not delete highlighting for Eval and Int key above each note area
 Public Sub clearAllSched()

@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+' All code in this file written by Ashley King
+
 ' change schedule when initials cell is changed and enter is pressed
 Private Sub Worksheet_Change(ByVal Target As Excel.range)
     Dim vRange As range

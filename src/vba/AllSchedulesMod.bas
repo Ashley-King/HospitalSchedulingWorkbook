@@ -1,5 +1,8 @@
 Attribute VB_Name = "AllSchedulesMod"
 Option Explicit
+
+'All code in this file written by Ashley King
+
 ' read 3W and 8P schedules and copy into All Schedules
 Public Sub readSchedules()
     Dim initials As String
