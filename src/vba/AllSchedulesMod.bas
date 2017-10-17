@@ -1,19 +1,18 @@
 Attribute VB_Name = "AllSchedulesMod"
 Option Explicit
-
-'All code in this file written by Ashley King
-
-' read 3W and 8P schedules and copy into All Schedules
+' read 3W, 8P and 3P schedules and copy into All Schedules
 Public Sub readSchedules()
     Dim initials As String
     Dim initialsArray As Object
     Dim counter As Integer
     Dim schedCell As range
     Dim schedCell2 As range
+    Dim schedCell3 As range
     Dim initialsBox As range
     Dim therCounter As Integer
     Dim r1 As range
     Dim r2 As range
+    Dim r3 As range
     Dim cell1 As range
     Dim cell2 As range
     Dim str1 As String
@@ -52,6 +51,20 @@ Public Sub readSchedules()
         End If
     Next schedCell2
     
+    ' loop through 3P to get initials; add to arraylist
+    For Each schedCell3 In Sheets("3P Schedule").range("SchedGrid3P")
+        ' check for empty cell, empty string, numbers & TMG procedure
+        If Not IsEmpty(schedCell3) And schedCell3.value <> " " And schedCell3 <> "" And Not IsNumeric(Left(schedCell3.value, 1)) And Trim(schedCell3.value) <> "TMG" Then
+            initials = schedCell3.value
+            If isGray(initials) = False And LCase(Trim(initials)) <> "lunch" Then
+                 initials = returnInitials(initials)
+                If Not initialsArray.Contains(initials) And initials <> "NOTE" Then
+                    initialsArray.Add (UCase(initials))
+                End If
+            End If
+        End If
+    Next schedCell3
+    
    ' add initials to All Schedules
    
    ' initialize counter
@@ -64,15 +77,20 @@ Public Sub readSchedules()
         End If
    Next initialsBox
    
-   ' look at each row in 3W and 8P schedules; if initials match initials in row
+   ' look at each row in 3W, 8P & 3P schedules; if initials match initials in row
    ' copy room and schedule row and paste into all schedules
    ' initialize row counter
    i = 3
    For Each cell1 In Sheets("All Schedules").range("AllSchedTherapistInitialsBox")
+    ' if the initials box is not empty, add a schedule
+    If Not IsEmpty(cell1) And cell1.value <> "" And cell1.value <> " " Then
         ' look at 3W Schedule
         For Each r1 In Sheets("3W Schedule").range("SchedGrid3W").Rows
+            ' "ADL EC" for instance
             str1 = "ADL " + CStr(cell1.value)
+            ' "ADLEC" for instance; account for lack of space between ADL and initials
             str2 = "ADL" + CStr(cell1.value)
+            ' if the row in 3W Schedule contains EC, ADL EC, or ADLEC, for instance
             If Application.WorksheetFunction.CountIf(r1, cell1.value) > 0 Or Application.WorksheetFunction.CountIf(r1, str1) > 0 Or Application.WorksheetFunction.CountIf(r1, str2) > 0 Then
                 cell1.Offset(i, -14).value = r1.Cells(1, 1).value
                 range(r1.Cells(1, 2), r1.Cells(1, 23)).Copy
@@ -93,8 +111,23 @@ Public Sub readSchedules()
                 i = i + 1
             End If
         Next r2
-   ' reset row number for next schedule
-   i = 3
+        ' look at 3P schedule
+        For Each r3 In Sheets("3P Schedule").range("SchedGrid3P").Rows
+            str1 = "ADL " + CStr(cell1.value)
+            str2 = "ADL" + CStr(cell1.value)
+            If Application.WorksheetFunction.CountIf(r3, cell1.value) > 0 Or Application.WorksheetFunction.CountIf(r3, str1) > 0 Or Application.WorksheetFunction.CountIf(r3, str2) > 0 Then
+                cell1.Offset(i, -14).value = r3.Cells(1, 1).value
+                range(r3.Cells(1, 2), r3.Cells(1, 23)).Copy
+                range(cell1.Offset(i, -10), cell1.Offset(i, 11)).PasteSpecial xlPasteValues
+                ' go to next row in schedule
+                i = i + 1
+            End If
+        Next r3
+        ' reset row number for next schedule so you can start at the top
+        i = 3
+       
+     End If
+
    Next cell1
    
    ' reset initialsArray
@@ -168,6 +201,8 @@ Public Sub createSchedules()
         Sheets("All Schedules"))
     ' go back to top of sheet
     ActiveWindow.ScrollRow = 1
+    ' select cell at top of page to remove selection bar at bottom of file
+    ActiveSheet.range("$AE$6").Select
     ' turn alerts back on
     Application.DisplayAlerts = True
     ' turn on screen updating

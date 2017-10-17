@@ -1,8 +1,5 @@
 Attribute VB_Name = "IndScheduleMod"
 Option Explicit
-
-' All code in this file written by Ashley King
-
 ' create schedule for individual therapist
 Sub createIndSched()
     Dim cell1 As range
@@ -11,6 +8,7 @@ Sub createIndSched()
     Dim cell3 As range
     Dim r1 As range
     Dim r2 As range
+    Dim r3 As range
     Dim str1 As String
     Dim str2 As String
     Dim i As Integer
@@ -22,7 +20,7 @@ Sub createIndSched()
    ' turn off screen updating
    Application.ScreenUpdating = False
 
-   ' look at each row in 3W and 8P schedules; if initials match initials in row
+   ' look at each row in 3W, 8P & 3P schedules; if initials match initials in row
    ' copy room and schedule row and paste into all schedules
 
 
@@ -60,6 +58,19 @@ Sub createIndSched()
             i = i + 1
         End If
     Next r2
+    
+    ' look at 3P schedule
+    For Each r3 In Sheets("3P Schedule").range("SchedGrid3P").Rows
+        str1 = "ADL " + CStr(ucStr)
+        str2 = "ADL" + CStr(ucStr)
+        If Application.WorksheetFunction.CountIf(r3, ucStr) > 0 Or Application.WorksheetFunction.CountIf(r3, str1) > 0 Or Application.WorksheetFunction.CountIf(r3, str2) > 0 Then
+            cell1.Offset(i, -14).value = r3.Cells(1, 1).value
+            range(r3.Cells(1, 2), r3.Cells(1, 23)).Copy
+            range(cell1.Offset(i, -10), cell1.Offset(i, 11)).PasteSpecial xlPasteValues
+            ' go to next row in schedule
+            i = i + 1
+        End If
+    Next r3
     
     ' get notes
     For Each cell3 In Sheets("All Therapists").range("AllTherapistsInitials")

@@ -1,10 +1,8 @@
 Attribute VB_Name = "HelperMethods"
 Option Explicit
 
-' All code in this file written by Ashley King
-
 ' clear contents and highlighting from All Schedules Sheet
-' does not delete highlighting for Eval and Int key above each note area
+' does not delete highlighting for Eval and Int keys above each note area
 Public Sub clearAllSched()
     Sheets("All Schedules").range("AllSchedTherapistInitialsBox").value = ""
     Sheets("All Schedules").range("RoomsAllSchedules").ClearContents
@@ -22,20 +20,30 @@ Public Sub clearDiddies()
 Dim clearArea As range
 Dim cell As range
 Dim cell2 As range
+Dim cell3 As range
 
 Sheets("All Diddies").range("RoomsRow3WAllDiddies").ClearContents
 Sheets("All Diddies").range("RoomsRow8PAllDiddies").ClearContents
+Sheets("All Diddies").range("RoomsRow3PAllDiddies").ClearContents
+
+' clear 3W diddies
 For Each cell In Sheets("All Diddies").range("SchedCol3WAllDiddies")
     cell.MergeArea.ClearContents
     ' remove any highlighting
     cell.MergeArea.Interior.ColorIndex = 2
 Next cell
-
+' clear 8P diddies
 For Each cell2 In Sheets("All Diddies").range("SchedCol8PAllDiddies")
     cell2.MergeArea.ClearContents
     ' remove any highlighting
     cell2.MergeArea.Interior.ColorIndex = 2
 Next cell2
+' clear 3P diddies
+For Each cell3 In Sheets("All Diddies").range("SchedCol3PAllDiddies")
+    cell3.MergeArea.ClearContents
+    ' remove any highlighting
+    cell3.MergeArea.Interior.ColorIndex = 2
+Next cell3
  
 End Sub
 
@@ -219,8 +227,9 @@ Public Sub clearIndSched()
 End Sub
 
 ' apply conditional formatting to All Schedules and Ind Schedule
-' takes cells for eval and int highlighting keys, room ranges to highlight for int and eval,
-' therapist's initials box range to check, and sheet name to highlight
+' takes cells for eval and int highlighting keys in All Schedules or Ind Schedule sheets, room ranges to highlight for INT and EVAL
+' in All Schedules or Ind Schedule sheets, therapist's initials box range to check, and sheet name to highlight (either All Schedules or
+' Ind Schedule)
 Public Sub schedCondFormat(evalKey As range, intKey As range, schedRooms As range, therInitialsBox As range, schedSheet As Worksheet)
     ' declare variables
     Dim evalInt As range
@@ -231,6 +240,10 @@ Public Sub schedCondFormat(evalKey As range, intKey As range, schedRooms As rang
     Dim roomCell8P As range
     Dim newEI8P As range
     Dim newRoom8P As range
+     Dim evalInt3P As range
+    Dim roomCell3P As range
+    Dim newEI3P As range
+    Dim newRoom3P As range
     Dim initialsBox As range
     Dim initialsCell As range
     Dim schedCell As range
@@ -299,6 +312,28 @@ Public Sub schedCondFormat(evalKey As range, intKey As range, schedRooms As rang
             Next newRoom8P
         End If
     Next newEI8P
+    
+     ' highlight rooms in 3P with EVALs in yellow
+    For Each evalInt3P In Sheets("3P Schedule").range("Eval_Int_3P")
+        If LCase(evalInt3P.value) = "eval" Then
+            For Each roomCell3P In schedRooms
+               If evalInt3P.Offset(0, 1).value = roomCell3P.value Then
+                roomCell3P.Interior.ColorIndex = 36
+               End If
+            Next roomCell3P
+        End If
+    Next evalInt3P
+        
+      ' highlight rooms in 3P with INTs in pink
+    For Each newEI3P In Sheets("3P Schedule").range("Eval_Int_3P")
+        If LCase(newEI3P.value) = "int" Then
+            For Each newRoom3P In schedRooms
+               If newEI3P.Offset(0, 1).value = newRoom3P.value Then
+                newRoom3P.Interior.ColorIndex = 38
+               End If
+            Next newRoom3P
+        End If
+    Next newEI3P
     
     ' highlight therapist's rooms on schedule in a different yellow
     For Each initialsCell In therInitialsBox
