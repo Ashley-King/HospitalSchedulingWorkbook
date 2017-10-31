@@ -2,7 +2,7 @@ Attribute VB_Name = "AllDiddiesMod"
 Option Explicit
 
 ' read 3W, 8P and 3P schedules and create diddies for each room that is occupied
-Public Sub createDiddies()
+Public Sub Create_All_Diddies()
     
     ' declare variables
     Dim room As range
@@ -41,7 +41,7 @@ Public Sub createDiddies()
         For Each roomCell In Sheets("3W Schedule").range("Rooms3WSchedule")
             If (roomCell.Offset(0, 23) <> " " And roomCell.Offset(0, 23) <> "") Or (roomCell.Offset(0, 24) <> " " _
                 And roomCell.Offset(0, 24) <> "") Then
-                If Sheets("All Diddies").range("RoomsRow3WAllDiddies").Find(roomCell.value, LookAt:=xlWhole, SearchOrder:=xlByRows) Is Nothing Then
+                If Sheets("All Diddies").range("RoomsRow3WAllDiddies").Find(roomCell.value, LookAt:=xlWhole, searchorder:=xlByRows) Is Nothing Then
                     room.value = roomCell.value
                     Exit For
                 End If
@@ -56,7 +56,7 @@ Public Sub createDiddies()
         For Each roomCell2 In Sheets("8P Schedule").range("Rooms8PSchedule")
             If (roomCell2.Offset(0, 23) <> " " And roomCell2.Offset(0, 23) <> "") Or (roomCell2.Offset(0, 24) <> " " _
             And roomCell2.Offset(0, 24) <> "") Then
-                If Sheets("All Diddies").range("RoomsRow8PAllDiddies").Find(roomCell2.value, LookAt:=xlWhole, SearchOrder:=xlByRows) Is Nothing Then
+                If Sheets("All Diddies").range("RoomsRow8PAllDiddies").Find(roomCell2.value, LookAt:=xlWhole, searchorder:=xlByRows) Is Nothing Then
                     room2.value = roomCell2.value
                     Exit For
                 End If
@@ -70,7 +70,7 @@ Public Sub createDiddies()
         For Each roomCell4 In Sheets("3P Schedule").range("Rooms3PSchedule")
             If (roomCell4.Offset(0, 23) <> " " And roomCell4.Offset(0, 23) <> "") Or (roomCell4.Offset(0, 24) <> " " _
             And roomCell4.Offset(0, 24) <> "") Then
-                If Sheets("All Diddies").range("RoomsRow3PAllDiddies").Find(roomCell4.value, LookAt:=xlWhole, SearchOrder:=xlByRows) Is Nothing Then
+                If Sheets("All Diddies").range("RoomsRow3PAllDiddies").Find(roomCell4.value, LookAt:=xlWhole, searchorder:=xlByRows) Is Nothing Then
                     room5.value = roomCell4.value
                     Exit For
                 End If
@@ -80,7 +80,7 @@ Public Sub createDiddies()
     
      ' add 3W schedule to diddies
     For Each room3 In Sheets("All Diddies").range("RoomsRow3WAllDiddies")
-        Set newRoom = Sheets("3W Schedule").range("Rooms3WSchedule").Find(room3.value, LookAt:=xlWhole, SearchOrder:=xlByRows)
+        Set newRoom = Sheets("3W Schedule").range("Rooms3WSchedule").Find(room3.value, LookAt:=xlWhole, searchorder:=xlByRows)
         ' i will start two rows below room3 in the 6:30 time slot
         i = 2
         If Not newRoom Is Nothing Then
@@ -103,7 +103,7 @@ Public Sub createDiddies()
     
     ' add 8P schedule to diddies
     For Each room4 In Sheets("All Diddies").range("RoomsRow8PAllDiddies")
-        Set newRoom = Sheets("8P Schedule").range("Rooms8PSchedule").Find(room4.value, LookAt:=xlWhole, SearchOrder:=xlByRows)
+        Set newRoom = Sheets("8P Schedule").range("Rooms8PSchedule").Find(room4.value, LookAt:=xlWhole, searchorder:=xlByRows)
         ' i will start two rows below room4 in the 6:30 time slot
         i = 2
         If Not newRoom Is Nothing Then
@@ -124,7 +124,7 @@ Public Sub createDiddies()
     
     ' add 3P schedule to diddies
     For Each room6 In Sheets("All Diddies").range("RoomsRow3PAllDiddies")
-        Set newRoom = Sheets("3P Schedule").range("Rooms3PSchedule").Find(room6.value, LookAt:=xlWhole, SearchOrder:=xlByRows)
+        Set newRoom = Sheets("3P Schedule").range("Rooms3PSchedule").Find(room6.value, LookAt:=xlWhole, searchorder:=xlByRows)
         ' i will start two rows below room4 in the 6:30 time slot
         i = 2
         If Not newRoom Is Nothing Then
@@ -155,6 +155,8 @@ Public Sub createDiddies()
     Application.DisplayAlerts = True
     
 End Sub
+
+
 
 
 

@@ -174,7 +174,7 @@ Next cell2
 Set noteDict = Nothing
 End Sub
 ' clear highlighting and old data and populate schedules; scroll back to top of page
-Public Sub createSchedules()
+Public Sub Create_All_Schedules()
     ' declare variables
     Dim timeCreated As range
     
@@ -209,5 +209,9 @@ Public Sub createSchedules()
    Application.ScreenUpdating = True
     
 End Sub
+
+
+
+
 
 

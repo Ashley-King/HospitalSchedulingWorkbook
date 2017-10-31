@@ -102,8 +102,6 @@ Public Sub lastTimeCreated(range As range)
    timeDate = Now()
    range.value = timeDate
 End Sub
-
-
 ' takes a cell value that is not a gray option or lunch (validate before passing) and returns the initials
 ' THIS WILL RETURN "TMG" AS INITIALS (IT IS A PROCEDURE AND SHOULD BE LISTED
 ' ON DIDDIES)
@@ -350,4 +348,172 @@ Public Sub schedCondFormat(evalKey As range, intKey As range, schedRooms As rang
     ' turn on screen updating
     Application.ScreenUpdating = True
 End Sub
+' searches for a val in sRng, if the value matches the value
+'in the same row first column is returned to the cell
+Public Function searchRange(val As range, sRng As range)
+    Dim cel As range
+    For Each cel In sRng.Cells
+        If cel.value = val.value Then
+            searchRange = cel.Parent.Cells(cel.Row, 1).value
+            Exit Function
+        End If
+    Next cel
+    searchRange = ""
+End Function
+' highlight rooms assigned to more than one OT or more than one PT
+' in worksheet_change function, able to remove highlighting when duplicates
+' are manually removed
+Public Sub highlightDuplicateRooms(sht As Worksheet, rng As range)
+    ' loop through rooms for OTs in sheet and highligh duplicates in range
+    Dim cell As range
+    For Each cell In rng
+        'If cell.value <> "" And cell.value <> " " And Not IsEmpty(cell) Then
+            If Application.WorksheetFunction.CountIf(rng, cell.value) > 1 And Not IsEmpty(cell) Then
+                cell.Interior.ColorIndex = 53
+                cell.Font.ColorIndex = 2
+             Else
+                cell.Interior.ColorIndex = 2
+                cell.Font.ColorIndex = 1
+            End If
+       ' End If
+        
+        
+    Next cell
+End Sub
+
+' clears contents and formatting from All Therapists rooms
+Public Sub clearAllTherapistsNotesAndRooms()
+    Dim allRooms As range
+    Dim allNotes As range
+    Dim cell As range
+    Dim cell2 As range
+    
+    Application.ScreenUpdating = False
+    
+    
+    Set allRooms = Sheets("All Therapists").range("AllTherapistsAllRooms")
+    Set allNotes = Sheets("All Therapists").range("AllTherapistsAllNotes")
+    ' clear highlighting and contents from all therapists room cells
+    For Each cell In allRooms
+        If cell.value <> "" And cell.value <> " " And Not IsEmpty(cell) Then
+            cell.ClearContents
+        End If
+        If cell.Interior.ColorIndex = 53 Then
+            cell.Interior.ColorIndex = 2
+            cell.Font.ColorIndex = 1
+        End If
+        
+    Next cell
+    
+    For Each cell2 In allNotes
+        If cell2.value <> "" And cell2.value <> " " And Not IsEmpty(cell2) Then
+            cell2.MergeArea.ClearContents
+        End If
+    Next cell2
+    
+     Application.ScreenUpdating = True
+    
+End Sub
+
+' Used to find the name of a worksheet; accepts the name as a string.
+Function GetWorksheet(shtName As String) As Worksheet
+    On Error Resume Next
+    Set GetWorksheet = Worksheets(shtName)
+End Function
+' create and return dictionary of initials and address of initials in All Therapists
+Public Function createInitialsDict()
+ Dim initialsDict As Object
+ Dim initialsCell As range
+ Dim initials As String
+ Dim initialsAddress As String
+ 
+ Set initialsDict = CreateObject("Scripting.Dictionary")
+ 
+ ' loop through all therapists to get initials and address of initials; add to dictionary
+    ' key = initials; value = address
+    For Each initialsCell In Sheets("All Therapists").range("AllTherapistsInitials")
+        If Not IsEmpty(initialsCell) And initialsCell.value <> "-" And initialsCell <> " " Then
+            initials = UCase(Trim(initialsCell.value))
+            initialsAddress = initialsCell.Address
+            If Not initialsDict.Exists(initials) Then
+                initialsDict.Add Key:=initials, Item:=initialsAddress
+            End If
+        End If
+    Next initialsCell
+    
+    Set createInitialsDict = initialsDict
+    Set initialsDict = Nothing
+    Exit Function
+    
+End Function
+' create and return dictionary of rooms and wings
+Public Function createRoomsDict()
+    Dim roomsDict As Object
+    Dim roomCell1 As range
+    Dim roomCell2 As range
+    Dim roomCell3 As range
+    Dim roomNum As String
+    Dim wing As String
+    
+    ' create dictionary
+    Set roomsDict = CreateObject("Scripting.Dictionary")
+    
+    ' loop through schedules to get rooms and associate them with wing
+    ' key = roomNum; value = wing
+    For Each roomCell1 In Sheets("3W Schedule").range("Rooms3WSchedule")
+        roomNum = roomCell1.value
+        wing = "3W"
+        If Not roomsDict.Exists(roomNum) Then
+            roomsDict.Add Key:=roomNum, Item:=wing
+        End If
+    Next roomCell1
+    
+    For Each roomCell2 In Sheets("8P Schedule").range("Rooms8PSchedule")
+        roomNum = UCase(roomCell2.value)
+        wing = "8P"
+        If Not roomsDict.Exists(roomNum) Then
+            roomsDict.Add Key:=roomNum, Item:=wing
+        End If
+    Next roomCell2
+    
+    For Each roomCell3 In Sheets("3P Schedule").range("Rooms3PSchedule")
+        roomNum = UCase(roomCell3.value)
+        wing = "3P"
+        If Not roomsDict.Exists(roomNum) Then
+            roomsDict.Add Key:=roomNum, Item:=wing
+        End If
+    Next roomCell3
+    
+    Set createRoomsDict = roomsDict
+    Set roomsDict = Nothing
+    Exit Function
+    
+End Function
+
+' procedure to test calls to clear and populate All Therapists
+Public Sub populateAllTherapists()
+    Call clearAllTherapistsNotesAndRooms
+    Call getTherapistsRooms(Sheets("TherRooms3W"))
+    Call getTherapistsRooms(Sheets("TherRooms8P"))
+    Call getTherapistsRooms(Sheets("TherRooms3P"))
+    Call lastTimeCreated(Sheets("All Therapists").range("AllTherapistsTimeCreatedCell"))
+End Sub
+
+
+
+Public Sub getLastRow(sheet As Worksheet, printCell As range)
+    Dim lastRow As Long
+    lastRow = sheet.Cells.Find("*", searchorder:=xlByRows, searchdirection:=xlPrevious).Row
+    ' print last row number in cell
+    printCell.value = lastRow
+End Sub
+
+' changes value of last row cell to 0 so that addRooms will work if
+' therapist form is cleared
+Public Sub changeLastRow()
+    Sheets("All Therapists").Unprotect Password:="Roper"
+    Sheets("All Therapists").range("LastRowCell3W").value = 0
+    Sheets("All Therapists").Protect Password:="Roper"
+End Sub
+
 

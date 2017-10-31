@@ -1,15 +1,7 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "Sheet2"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = True
+Attribute VB_Name = "SaveScheduleMod"
 Option Explicit
 
-Private Sub CommandButton1_Click()
+Private Sub SaveSchedulePDF(scheduleName As String)
 
     
 'Path = file path where the data will be saved ******(change this to your appropriate file location)******
@@ -18,11 +10,11 @@ Private Sub CommandButton1_Click()
     
 'ASName = The current active sheet
     Dim ASName As String
-    ASName = ActiveSheet.Name
+    ASName = scheduleName
     
 'FName = FileName
-    Dim FName As String
-    FName = Path & ASName & ".pdf"
+    Dim fName As String
+    fName = Path & ASName & ".pdf"
     
 'FloorNum = the range of the schedule we are currently saving (ie 3W or 8P)
 'Call GetRange and Pass it the Active Sheet Name(ASName)(ie the floor schedule we are working with) and set FloorNum to the range needed
@@ -30,7 +22,7 @@ Private Sub CommandButton1_Click()
     FloorNum = GetRange(ASName)
     
 'Call SaveSchedule to save a copy for use with the Schedule Posting HTML file
-    Call SaveSchedule(FName, ASName, FloorNum)
+    Call SaveSchedule(fName, ASName, FloorNum)
     
 'Call SaveArchive to save a copy of the schudle in the archive according to date
     Call SaveArchive(ASName, FloorNum)
@@ -44,8 +36,8 @@ Private Sub CommandButton1_Click()
 End Sub
 
 'This Sub will save the current schedule as PDF for use with Scheduling HTML script
-Private Sub SaveSchedule(FName As String, ASName As String, FloorNum As String)
-
+Private Sub SaveSchedule(fName As String, ASName As String, FloorNum As String)
+    Sheets(ASName).Select
     With ActiveSheet.PageSetup
         .CenterHeader = ASName & " For " & GetDate()
         .Orientation = xlLandscape
@@ -55,7 +47,7 @@ Private Sub SaveSchedule(FName As String, ASName As String, FloorNum As String)
     
    ActiveSheet.ExportAsFixedFormat _
    Type:=xlTypePDF, _
-   Filename:=FName, _
+   Filename:=fName, _
    Quality:=xlQualityStandard, _
    IncludeDocProperties:=True, _
    IgnorePrintAreas:=False, _
@@ -66,7 +58,7 @@ Private Sub SaveSchedule(FName As String, ASName As String, FloorNum As String)
 End Sub
 'This Sub will save the current schedule as an Archived PDF file
 Private Sub SaveArchive(ASName As String, FloorNum As String)
-    
+    Sheets(ASName).Select
     With ActiveSheet.PageSetup
         .CenterHeader = "Archived Copy: " & ASName & " For " & GetDate()
         .Orientation = xlLandscape
@@ -86,25 +78,27 @@ Private Sub SaveArchive(ASName As String, FloorNum As String)
    OpenAfterPublish:=True
 
 End Sub
-Private Sub SaveToODS(ASName As String, FloorNum As String)
-
-
-ActiveSheet.range(FloorNum).Select
-
-
-
-
-End Sub
-'This Sub will open the current schedule in a web-browser
-Private Sub LaunchSchedulizer(ASName)
-
-    If ASName = "8P Schedule" Then
-       ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 8P.pdf")
-    ElseIf ASName = "3W Schedule" Then
-       ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 3W.pdf")
-    End If
-
-End Sub
+'Private Sub SaveToODS(ASName As String, FloorNum As String)
+'
+'
+'ActiveSheet.range(FloorNum).Select
+'
+'
+'
+'
+'End Sub
+''This Sub will open the current schedule in a web-browser
+'Private Sub LaunchSchedulizer(ASName)
+'
+'    If ASName = "8P Schedule" Then
+'       ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 8P.pdf")
+'    ElseIf ASName = "3W Schedule" Then
+'       ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 3W.pdf")
+'    Else
+'        ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 3P.pdf")
+'    End If
+'
+'End Sub
 'This Function will return the current date being used
 Public Function GetDate() As String
 
@@ -122,6 +116,22 @@ Private Function GetRange(ASName As String) As String
   If ASName = "8P Schedule" Then
         GetRange = "$B$1:$AA$32"
   End If
-
-
+  If ASName = "3P Schedule" Then
+        GetRange = "$B$1:$AA$16"
+  End If
+    
 End Function
+
+Public Sub Save3WSchedule()
+    Call SaveSchedulePDF("3W Schedule")
+End Sub
+Public Sub Save8PSchedule()
+    Call SaveSchedulePDF("8P Schedule")
+End Sub
+Public Sub Save3PSchedule()
+    Call SaveSchedulePDF("3P Schedule")
+End Sub
+
+
+
+
