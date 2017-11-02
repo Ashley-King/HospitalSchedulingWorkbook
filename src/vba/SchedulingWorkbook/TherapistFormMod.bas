@@ -30,7 +30,7 @@ Public Sub getTherapistsRoomsAndNotes(therapistSheet As Worksheet, Optional last
 
     
      ' keep up with last row read on Rooms if optional parameter is passed it
-    If lastRow = 0 Then
+    If lastRow = 1 Then
         ' read to last filled row of B
         Set therShtRng = therSheet.range("$B$2:$B" & range("$B$2").End(xlDown).Row)
     Else
@@ -103,6 +103,8 @@ Public Sub getTherapistsRoomsAndNotes(therapistSheet As Worksheet, Optional last
     ' highlight duplicates
     Call highlightDuplicateRooms(targetSheet, targetSheet.range("AllTherapistsOTRooms"))
     Call highlightDuplicateRooms(targetSheet, targetSheet.range("AllTherapistsPTRooms"))
+    Call highlightDuplicateRooms(targetSheet, targetSheet.range("AllTherapistsSpeechRooms"))
+    Call highlightDuplicateRooms(targetSheet, targetSheet.range("AllTherapistsRecRooms"))
     
     ' reset  dictionary objects
     Set initialsDict = Nothing
@@ -143,7 +145,7 @@ End If
 Workbooks.Open Filename:=Path
 Sheets(sheetName).Copy After:=targetWorkbook.Sheets("Ind Schedule")
 Sheets(sheetName).Name = sName
-Workbooks(wName).Close savechanges:=False
+Workbooks(wName).Close savechanges:=True
 
 ActiveWorkbook.Sheets(sName).Visible = False
 

@@ -14,6 +14,29 @@ Public Sub clearAllSched()
     Sheets("All Schedules").range("AllSchedNoteCells").ClearContents
     
 End Sub
+' used to populate All Schedules and Ind Schedule
+' rowCounter should be a private variable used at the module level
+Public Sub populateSchedules(wkSheet As Worksheet, grid As String, cell As range, rowCounter As Integer)
+    Dim schedRow As range
+    Dim str1 As String
+    Dim str2 As String
+    
+    ' look at schedule
+    For Each schedRow In wkSheet.range(grid).Rows
+        ' "ADL EC" for instance
+        str1 = "ADL " + CStr(cell.value)
+        ' "ADLEC" for instance; account for lack of space between ADL and initials
+        str2 = "ADL" + CStr(cell.value)
+        ' if the row in 3W Schedule contains EC, ADL EC, or ADLEC, for instance
+        If Application.WorksheetFunction.CountIf(schedRow, cell.value) > 0 Or Application.WorksheetFunction.CountIf(schedRow, str1) > 0 Or Application.WorksheetFunction.CountIf(schedRow, str2) > 0 Then
+            cell.Offset(rowCounter, -14).value = schedRow.Cells(1, 1).value
+            range(schedRow.Cells(1, 2), schedRow.Cells(1, 23)).Copy
+            range(cell.Offset(rowCounter, -10), cell.Offset(rowCounter, 11)).PasteSpecial xlPasteValues
+            ' go to next row in schedule
+            rowCounter = rowCounter + 1
+        End If
+    Next schedRow
+End Sub
 
 ' clear all data  and highlighting in diddies
 Public Sub clearDiddies()

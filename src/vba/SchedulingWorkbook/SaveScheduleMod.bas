@@ -78,27 +78,6 @@ Private Sub SaveArchive(ASName As String, FloorNum As String)
    OpenAfterPublish:=True
 
 End Sub
-'Private Sub SaveToODS(ASName As String, FloorNum As String)
-'
-'
-'ActiveSheet.range(FloorNum).Select
-'
-'
-'
-'
-'End Sub
-''This Sub will open the current schedule in a web-browser
-'Private Sub LaunchSchedulizer(ASName)
-'
-'    If ASName = "8P Schedule" Then
-'       ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 8P.pdf")
-'    ElseIf ASName = "3W Schedule" Then
-'       ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 3W.pdf")
-'    Else
-'        ThisWorkbook.FollowHyperlink ("C:\tmp\Schedulizer 3P.pdf")
-'    End If
-'
-'End Sub
 'This Function will return the current date being used
 Public Function GetDate() As String
 

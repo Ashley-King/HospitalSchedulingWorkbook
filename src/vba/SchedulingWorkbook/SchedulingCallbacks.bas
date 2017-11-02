@@ -20,15 +20,15 @@ Public Sub importRooms(control As IRibbonControl)
     Call copy3WSheet
     Call getTherapistsRoomsAndNotes(Sheets("3WFormSheet"))
     ' record last row read when sheet was imported
-    'Call getLastRow(Sheets("3WFormSheet"), Sheets("All Therapists").range("LastRowCell3W"))
+    Call getLastRow(Sheets("3WFormSheet"), Sheets("All Therapists").range("LastRowCell3W"))
     Call copy8PSheet
     Call getTherapistsRoomsAndNotes(Sheets("8PFormSheet"))
     ' record last row read when sheet was imported
-    'Call getLastRow(Sheets("8PFormSheet"), Sheets("All Therapists").range("LastRowCell8P"))
+    Call getLastRow(Sheets("8PFormSheet"), Sheets("All Therapists").range("LastRowCell8P"))
     Call copy3PSheet
     Call getTherapistsRoomsAndNotes(Sheets("3PFormSheet"))
     ' record last row read when sheet was imported
-    'Call getLastRow(Sheets("3PFormSheet"), Sheets("All Therapists").range("LastRowCell3P"))
+    Call getLastRow(Sheets("3PFormSheet"), Sheets("All Therapists").range("LastRowCell3P"))
     Call lastTimeCreated(Sheets("All Therapists").range("AllTherapistsTimeCreatedCell"))
     Sheets("All Therapists").Select
 End Sub
@@ -36,16 +36,16 @@ End Sub
 ' callback for Add Rooms and Notes From 3W in scheduling tab
 Public Sub addRooms3W(control As IRibbonControl)
     Call copy3WSheet
-    Call getTherapistsRoomsAndNotes(Sheets("3WFormSheet"))
+    Call getTherapistsRoomsAndNotes(Sheets("3WFormSheet"), Sheets("All Therapists").range("LastRowCell3W").value)
     ' record last row read when sheet was imported
-    'Call getLastRow(Sheets("3WFormSheet"), Sheets("All Therapists").range("LastRowCell3W"))
+    Call getLastRow(Sheets("3WFormSheet"), Sheets("All Therapists").range("LastRowCell3W"))
     Call lastTimeCreated(Sheets("All Therapists").range("AllTherapistsTimeCreatedCell"))
     Sheets("All Therapists").Select
 End Sub
 ' callback for Add Rooms and Notes From 8P in scheduling tab
 Public Sub addRooms8P(control As IRibbonControl)
    Call copy8PSheet
-    Call getTherapistsRoomsAndNotes(Sheets("8PFormSheet"))
+    Call getTherapistsRoomsAndNotes(Sheets("8PFormSheet"), Sheets("All Therapists").range("LastRowCell8P").value)
     ' record last row read when sheet was imported
     Call getLastRow(Sheets("8PFormSheet"), Sheets("All Therapists").range("LastRowCell8P"))
     Call lastTimeCreated(Sheets("All Therapists").range("AllTherapistsTimeCreatedCell"))
@@ -54,7 +54,7 @@ End Sub
 ' callback for Add Rooms and Notes From 3P in scheduling tab
 Public Sub addRooms3P(control As IRibbonControl)
    Call copy3PSheet
-    Call getTherapistsRoomsAndNotes(Sheets("3PFormSheet"))
+    Call getTherapistsRoomsAndNotes(Sheets("3PFormSheet"), Sheets("All Therapists").range("LastRowCell3P").value)
     ' record last row read when sheet was imported
     Call getLastRow(Sheets("3PFormSheet"), Sheets("All Therapists").range("LastRowCell3P"))
     Call lastTimeCreated(Sheets("All Therapists").range("AllTherapistsTimeCreatedCell"))

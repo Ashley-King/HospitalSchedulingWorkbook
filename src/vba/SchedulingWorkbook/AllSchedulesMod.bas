@@ -35,9 +35,9 @@ Public Sub readSchedules()
     For Each cell In Sheets("All Schedules").range("AllSchedTherapistInitialsBox")
         ' if the initials box is not empty, add a schedule
         If Not IsEmpty(cell) And cell.value <> "" And cell.value <> " " Then
-            Call populateAllSchedules(Sheets("3W Schedule"), "SchedGrid3W", cell)
-            Call populateAllSchedules(Sheets("8P Schedule"), "SchedGrid8P", cell)
-            Call populateAllSchedules(Sheets("3P Schedule"), "SchedGrid3P", cell)
+            Call populateSchedules(Sheets("3W Schedule"), "SchedGrid3W", cell, rowCounter)
+            Call populateSchedules(Sheets("8P Schedule"), "SchedGrid8P", cell, rowCounter)
+            Call populateSchedules(Sheets("3P Schedule"), "SchedGrid3P", cell, rowCounter)
             ' reset row counter
             rowCounter = 3
         End If
@@ -137,24 +137,4 @@ Public Sub createInitialsArray(sheet As Worksheet, grid As String)
     Next schedCell
 End Sub
 
-Public Sub populateAllSchedules(wkSheet As Worksheet, grid As String, cell As range)
-    Dim schedRow As range
-    Dim str1 As String
-    Dim str2 As String
-    
-    ' look at 3W Schedule
-    For Each schedRow In wkSheet.range(grid).Rows
-        ' "ADL EC" for instance
-        str1 = "ADL " + CStr(cell.value)
-        ' "ADLEC" for instance; account for lack of space between ADL and initials
-        str2 = "ADL" + CStr(cell.value)
-        ' if the row in 3W Schedule contains EC, ADL EC, or ADLEC, for instance
-        If Application.WorksheetFunction.CountIf(schedRow, cell.value) > 0 Or Application.WorksheetFunction.CountIf(schedRow, str1) > 0 Or Application.WorksheetFunction.CountIf(schedRow, str2) > 0 Then
-            cell.Offset(rowCounter, -14).value = schedRow.Cells(1, 1).value
-            range(schedRow.Cells(1, 2), schedRow.Cells(1, 23)).Copy
-            range(cell.Offset(rowCounter, -10), cell.Offset(rowCounter, 11)).PasteSpecial xlPasteValues
-            ' go to next row in schedule
-            rowCounter = rowCounter + 1
-        End If
-    Next schedRow
-End Sub
+

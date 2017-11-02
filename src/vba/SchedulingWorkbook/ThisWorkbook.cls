@@ -16,4 +16,7 @@ Private Sub Workbook_Open()
     For Each wSheetName In Worksheets
         wSheetName.Protect Password:="Roper", UserInterFaceOnly:=True
     Next wSheetName
+    ' schedule change last row cell so that addRooms will work after therapist form is cleared and repopulated
+    Application.OnTime TimeValue("18:30:00"), "changeLastRow"
+
 End Sub
